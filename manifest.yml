@@ -1,0 +1,5 @@
+---
+applications:
+ - name: NodeManager
+   random-route: true
+   memory: 256M

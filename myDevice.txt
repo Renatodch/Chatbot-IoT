@@ -1,0 +1,54 @@
+/********* Send messages from device ********/
+mosquitto_sub -h test.mosquitto.org -t "/cloud/request/S001"  -v
+
+mosquitto_pub -h test.mosquitto.org -t "/station/state/" -u wildcard -p 1883 -i S001 -m {\"type\":0,\"id\":\"S001\",\"value\":32,\"unidad\":\"C\",\"alerta\":true,\"chatId\":\"1468952524\"}
+mosquitto_pub -h test.mosquitto.org -t "/station/state/" -u wildcard -p 1883 -i S001 -m {\"type\":1,\"id\":\"S001\",\"value\":10,\"unidad\":\"cm\",\"alerta\":true,\"chatId\":\"1468952524\"}
+mosquitto_pub -h test.mosquitto.org -t "/station/state/" -u wildcard -p 1883 -i S001 -m {\"type\":2,\"id\":\"S001\",\"value\":false,\"unidad\":\"\",\"alerta\":true,\"chatId\":\"1468952524\"}
+
+mosquitto_pub -h test.mosquitto.org -t "/station/state/" -u wildcard -p 1883 -i S001 -m {\"type\":0,\"id\":\"S001\",\"value\":22,\"unidad\":\"C\",\"alerta\":false,\"chatId\":\"1468952524\"}
+mosquitto_pub -h test.mosquitto.org -t "/station/state/" -u wildcard -p 1883 -i S001 -m {\"type\":1,\"id\":\"S001\",\"value\":10,\"unidad\":\"cm\",\"alerta\":false,\"chatId\":\"1468952524\"}
+mosquitto_pub -h test.mosquitto.org -t "/station/state/" -u wildcard -p 1883 -i S001 -m {\"type\":2,\"id\":\"S001\",\"value\":true,\"unidad\":\"\",\"alerta\":false,\"chatId\":\"1468952524\"}
+mosquitto_pub -h test.mosquitto.org -t "/station/state/" -u wildcard -p 1883 -i S001 -m {\"type\":3,\"id\":\"S001\",\"value\":true,\"unidad\":\"\",\"alerta\":false,\"chatId\":\"1468952524\"}
+
+
+mosquitto_pub -h localhost -t "/station/state/" -u renato -p 9000 -i S001 -m {\"type\":\"Renato\"}
+
+/*********************************************/
+
+
+/*ibm watson iot platform*/
+mosquitto_sub -h jjn758.messaging.internetofthings.ibmcloud.com -p 1883 -u use-token-auth -P UELwn7qmrlP+Ga2E5r -t iotdm-1/#  -i d:jjn758:station:S001
+mosquitto_sub -h jjn758.messaging.internetofthings.ibmcloud.com -p 1883 -u use-token-auth -P UELwn7qmrlP+Ga2E5r -t iot-2/cmd/update/fmt/json -i d:jjn758:station:S001
+mosquitto_sub -h jjn758.messaging.internetofthings.ibmcloud.com -p 1883 -u use-token-auth -P UELwn7qmrlP+Ga2E5r -t iotdm-1/# -i d:jjn758:station:S001
+mosquitto_pub -h jjn758.messaging.internetofthings.ibmcloud.com -p 1883 -u use-token-auth -P UELwn7qmrlP+Ga2E5r -t iot-2/evt/status/fmt/json -i d:jjn758:station:S001 -m {"temp":22}
+mosquitto_pub -h jjn758.messaging.internetofthings.ibmcloud.com -p 1883 -u use-token-auth -P UELwn7qmrlP+Ga2E5r -t iot-2/cmd/update/fmt/txt -i d:jjn758:station:S001 -m updating
+
+/******************************* watson assistant ************************************/
+url=https://api.us-south.assistant.watson.cloud.ibm.com/instances/6cf38704-f1e9-4c15-80db-d3a2c78db1c0
+version=2022-06-15
+
+SEND_USER_INPUT: POST /v2/assistants/{assistant_id}/message   
+The message to be sent. This includes the user's input, context data, and optional content such as intents and entities.
+
+curl -X POST -u "apikey:v3M6wie7sicZK-Y5IbHc8CIuD8IBc_s-yNkLJNVcw4BA" "https://api.us-south.assistant.watson.cloud.ibm.com/instances/6cf38704-f1e9-4c15-80db-d3a2c78db1c0/v2/assistants/4757a391-ef5a-41b4-a9e9-543e2f736302/sessions?version=2022-06-15"
+curl -X POST -u "apikey:v3M6wie7sicZK-Y5IbHc8CIuD8IBc_s-yNkLJNVcw4BA" --header "Content-Type:application/json" --data "{\"input\": {\"text\": \"Cual es la temperatura ed la estacion\"}}" "https://api.us-south.assistant.watson.cloud.ibm.com/instances/6cf38704-f1e9-4c15-80db-d3a2c78db1c0/v2/assistants/4757a391-ef5a-41b4-a9e9-543e2f736302/sessions/bc35b7d0-b958-40b5-b56a-1bd1f2f6148f/message?version=2022-06-15"
+curl -X DELETE -u "apikey:v3M6wie7sicZK-Y5IbHc8CIuD8IBc_s-yNkLJNVcw4BA" "https://api.us-south.assistant.watson.cloud.ibm.com/instances/6cf38704-f1e9-4c15-80db-d3a2c78db1c0/v2/assistants/4757a391-ef5a-41b4-a9e9-543e2f736302/sessions/bc35b7d0-b958-40b5-b56a-1bd1f2f6148f?version=2022-06-15"
+
+
+
+
+/*######################## SKILL: STATION SKILL ################################*/
+/*Crea la sesion*/
+curl -X POST -u "apikey:v3M6wie7sicZK-Y5IbHc8CIuD8IBc_s-yNkLJNVcw4BA" "https://api.us-south.assistant.watson.cloud.ibm.com/instances/6cf38704-f1e9-4c15-80db-d3a2c78db1c0/v2/assistants/4757a391-ef5a-41b4-a9e9-543e2f736302/sessions?version=2022-06-15"
+
+/*Mensaje helper de inicio*/
+curl -X POST -u "apikey:v3M6wie7sicZK-Y5IbHc8CIuD8IBc_s-yNkLJNVcw4BA" --header "Content-Type:application/json"  "https://api.us-south.assistant.watson.cloud.ibm.com/instances/6cf38704-f1e9-4c15-80db-d3a2c78db1c0/v2/assistants/4757a391-ef5a-41b4-a9e9-543e2f736302/sessions/1840de4d-19d9-4b6b-8844-04302092b39a/message?version=2022-06-15"
+
+/*encender foco ejm.*/
+curl -X POST -u "apikey:v3M6wie7sicZK-Y5IbHc8CIuD8IBc_s-yNkLJNVcw4BA" --header "Content-Type:application/json" --data "{\"input\": {\"text\": \"quiero saber el estado del interruptor\"}}" "https://api.us-south.assistant.watson.cloud.ibm.com/instances/6cf38704-f1e9-4c15-80db-d3a2c78db1c0/v2/assistants/4757a391-ef5a-41b4-a9e9-543e2f736302/sessions/5d09fb72-0c0d-4a74-a2b7-ffdde0de4193/message?version=2022-06-15"
+curl -X POST -u "apikey:v3M6wie7sicZK-Y5IbHc8CIuD8IBc_s-yNkLJNVcw4BA" --header "Content-Type:application/json" --data "{\"input\": {\"text\": \"\"}}" "https://api.us-south.assistant.watson.cloud.ibm.com/instances/6cf38704-f1e9-4c15-80db-d3a2c78db1c0/v2/assistants/4757a391-ef5a-41b4-a9e9-543e2f736302/sessions/5d09fb72-0c0d-4a74-a2b7-ffdde0de4193/message?version=2022-06-15"
+
+/*destruye la sesion*/
+curl -X DELETE -u "apikey:v3M6wie7sicZK-Y5IbHc8CIuD8IBc_s-yNkLJNVcw4BA" "https://api.us-south.assistant.watson.cloud.ibm.com/instances/6cf38704-f1e9-4c15-80db-d3a2c78db1c0/v2/assistants/4757a391-ef5a-41b4-a9e9-543e2f736302/sessions/35833a4f-0eec-4969-a31d-16461b92d9d4?version=2022-06-15"
+
+
